@@ -50,8 +50,19 @@ class Board extends React.Component {
   renderSquare(i) {
     return (<Square
       value={this.props.squares[i]}
+      key={i}
       onClick={()=>{this.props.onClick(i)}}
       />
+    );
+  }
+
+  renderRow(size, rowIndex) {
+    const squares = [];
+    for(let i=0; i<size; i++){
+      let squareIndex = rowIndex*size + i;
+      squares.push(this.renderSquare(squareIndex));
+    }
+    return (<div className="board-row" key={rowIndex}>{squares}</div>
     );
   }
 
@@ -69,6 +80,15 @@ class Board extends React.Component {
     // else{
     //   status = 'Next player: ' + this.getNextPlayer();
     // }
+    const rows = [];
+    for(let i = 0; i<this.props.size; i++){
+      rows.push(this.renderRow(this.props.size, i));
+    }
+
+    return (
+      <div>{rows}</div>
+    );
+
 
     return (
       <div>
@@ -132,6 +152,7 @@ class Game extends React.Component {
   }
 
   render() {
+    const boardSize = 3;
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
@@ -153,7 +174,8 @@ class Game extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-          <Board 
+          <Board
+            size={boardSize}
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
           />
