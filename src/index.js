@@ -52,7 +52,6 @@ class Board extends React.Component {
   // }
 
   renderSquare(i) {
-
     return (<Square
       className={i===this.props.lastIndex ? '' : ''}
       value={this.props.squares[i]}
@@ -191,6 +190,9 @@ class Game extends React.Component {
     if(winnerIndexes){
       const winner = current.squares[winnerIndexes[0]];
       status = winner + ' won!';
+    }
+    else if(this.state.stepNumber >= boardSize*boardSize){
+      status = "Game over!";
     }
     else{
       status = "Next player: " + (this.state.xIsNext ? 'X' : 'O');
