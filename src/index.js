@@ -19,7 +19,7 @@ import './index.css';
 //function component
 function Square(props){
   let className = "square";
-  if(props.isLastIndex){
+  if(props.isActive){
     className += ' sqaure-active'
   }
   return(
@@ -52,11 +52,13 @@ class Board extends React.Component {
   // }
 
   renderSquare(i) {
+
     return (<Square
       className={i===this.props.lastIndex ? '' : ''}
       value={this.props.squares[i]}
       key={i}
-      isLastIndex={i===this.props.lastIndex}
+      isActive={i===this.props.lastIndex || this.props.winnerIndexes?.includes(i)}
+      winnerIndexes={this.props.winnerIndexes}
       onClick={()=>{this.props.onClick(i)}}
       />
     );
@@ -129,6 +131,7 @@ class Game extends React.Component {
       }],
       xIsNext: true,
       stepNumber: 0,
+      isAscending: true,
     }
   }
 
@@ -159,11 +162,18 @@ class Game extends React.Component {
     });
   }
 
+  changeOrder(){
+    this.setState({
+      isAscending: !this.state.isAscending,
+    });
+  }
+  
+
   render() {
     const boardSize = 3;
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    const winnerIndexes = calculateWinner(current.squares);
     const moves = history.map((step, move) => {
       const row = Math.floor(step.lastIndex/boardSize)+1;
       const col = (step.lastIndex%boardSize)+1;
@@ -174,8 +184,12 @@ class Game extends React.Component {
         </li>
       );
     })
+    if(!this.state.isAscending){
+      moves.reverse();
+    }
     let status;
-    if(winner){
+    if(winnerIndexes){
+      const winner = current.squares[winnerIndexes[0]];
       status = winner + ' won!';
     }
     else{
@@ -188,12 +202,15 @@ class Game extends React.Component {
             size={boardSize}
             squares={current.squares}
             lastIndex={current.lastIndex}
+            winnerIndexes={winnerIndexes}
             onClick={(i) => this.handleClick(i)}
           />
         </div>
         <div className="game-info">
-          <div>{status}</div>
-          <ol>{moves}</ol>
+          <div>{status}</div>          
+          <ol>{moves}</ol>   
+          <div><button onClick={()=>this.changeOrder()}>Change order</button>
+          </div>       
         </div>
       </div>
     );
@@ -220,7 +237,7 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return [a,b,c];
     }
   }
   return null;
