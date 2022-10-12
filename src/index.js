@@ -18,8 +18,12 @@ import './index.css';
 
 //function component
 function Square(props){
+  let className = "square";
+  if(props.isLastIndex){
+    className += ' sqaure-active'
+  }
   return(
-    <button className="square" onClick={props.onClick}>
+    <button className={className} onClick={props.onClick}>
       {props.value}
     </button>
   );
@@ -49,8 +53,10 @@ class Board extends React.Component {
 
   renderSquare(i) {
     return (<Square
+      className={i===this.props.lastIndex ? '' : ''}
       value={this.props.squares[i]}
       key={i}
+      isLastIndex={i===this.props.lastIndex}
       onClick={()=>{this.props.onClick(i)}}
       />
     );
@@ -119,6 +125,7 @@ class Game extends React.Component {
     this.state = {
       history:[{
         squares: Array(9).fill(null),
+        lastIndex: null,
       }],
       xIsNext: true,
       stepNumber: 0,
@@ -138,6 +145,7 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([{
         squares: squares,
+        lastIndex: i,
       }]),
       xIsNext: !this.state.xIsNext,
       stepNumber: history.length,
@@ -157,7 +165,7 @@ class Game extends React.Component {
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
     const moves = history.map((step, move) => {
-      const desc = move ? 'Go to step #' + move : 'Go to game begin';
+      const desc = move ? 'Go to step #' + move :'Go to game begin';
       return (
         <li key={move}>
           <button onClick={()=>this.jumpTo(move)}>{desc}</button>
@@ -177,6 +185,7 @@ class Game extends React.Component {
           <Board
             size={boardSize}
             squares={current.squares}
+            lastIndex={current.lastIndex}
             onClick={(i) => this.handleClick(i)}
           />
         </div>
