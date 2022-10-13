@@ -65,18 +65,7 @@ class Board extends React.Component {
 class Game extends React.Component {
   constructor(props){
     super(props);
-    this.state = {
-      history:[{
-        squares: Array(9).fill(null),
-        lastIndex: null,
-        activeIndexes: [],
-      }],
-      xIsNext: true,
-      stepNumber: 0,
-      isAscending: true,
-      boardSize: 3,
-      status: 'Start game!'
-    }
+    this.state = initialState;
   }
 
   handleClick(i){
@@ -137,14 +126,18 @@ class Game extends React.Component {
     const moves = history.map((step, move) => {
       const row = Math.floor(step.lastIndex/boardSize)+1;
       const col = (step.lastIndex%boardSize)+1;
-      const desc = move ? 'Go to step #' + move +`(${row}, ${col})`:'Go to game begin';
+      const desc = move ? 'Go to step #' + move +` (${row}, ${col})`:'Go to game begin';
       return (
-        <li key={move}>
-          <button onClick={()=>this.jumpTo(move)}>{desc}</button>
-        </li>
+        <ul key={move}>
+          <button className='history-button' onClick={()=>this.jumpTo(move)}>{desc}</button>
+        </ul>
       );
     })
     return moves || [];
+  }
+
+  resetGame(){
+    this.setState(initialState);
   }
 
   render() {
@@ -166,13 +159,14 @@ class Game extends React.Component {
             squares={current.squares}
             activeIndexes={current.activeIndexes}
             onClick={(i) => this.handleClick(i)}
-          />
+          />       
+          <button className='restart-button' onClick={()=>this.resetGame()}>Restart</button>
+          
         </div>
         <div className="game-info">
-          <div>{status}</div>          
-          <ol>{moves}</ol>   
-          <div><button onClick={()=>this.changeOrder()}>Change order</button>
-          </div>       
+          <div className='status-info'>{status}</div>
+          <ol>{moves}</ol>  
+          <button className='restart-button' onClick={()=>this.changeOrder()}>Sort history</button>    
         </div>
       </div>
     );
@@ -184,6 +178,18 @@ class Game extends React.Component {
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<Game />);
 
+const initialState = {
+  history:[{
+    squares: Array(9).fill(null),
+    lastIndex: null,
+    activeIndexes: [],
+  }],
+  xIsNext: true,
+  stepNumber: 0,
+  isAscending: true,
+  boardSize: 3,
+  status: 'Start game!'
+};
 
 function calculateWinner(squares) {
   const lines = [

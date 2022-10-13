@@ -4,7 +4,7 @@ body {
 }
 
 ol, ul {
-  padding-left: 30px;
+  padding-left: 5px;
 }
 
 .board-row:after {
@@ -33,7 +33,7 @@ ol, ul {
 }
 
 .sqaure-active {
-  background: burlywood;
+  background: mistyrose;
 }
 
 .square:focus {
@@ -51,4 +51,26 @@ ol, ul {
 
 .game-info {
   margin-left: 20px;
+}
+
+.restart-button {
+  margin-top: 20px;
+  background: brown;
+  border: none;
+  padding: 5px;
+  color: #fff;
+}
+
+.history-button {
+  margin-top: 10px;
+  padding: 5px;
+  background: gainsboro;
+  border: 2px brown;
+  color: brown;
+}
+
+.status-info {
+  color: brown;
+  margin: 0;
+  font-weight: 800;
 }
