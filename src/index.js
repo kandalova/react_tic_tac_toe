@@ -89,7 +89,7 @@ class Game extends React.Component {
     }
 
     squares[i] = this.state.xIsNext ? 'X' : 'O';
-    let { nextStatus, nextXIsNext, winnerIndexes } = this.checkGameState(squares);
+    let { nextStatus, winnerIndexes } = this.checkGameState(squares);
 
     this.setState({
       history: history.concat([{
@@ -97,7 +97,7 @@ class Game extends React.Component {
         lastIndex: i,
         activeIndexes: winnerIndexes ? winnerIndexes : [i],
       }]),
-      xIsNext: nextXIsNext,
+      xIsNext: !this.state.xIsNext,
       stepNumber: history.length,
       status: nextStatus,
     });
@@ -106,18 +106,17 @@ class Game extends React.Component {
   checkGameState(squares){
     const winnerIndexes = calculateWinner(squares);
     let nextStatus;
-    let nextXIsNext = !this.state.xIsNext;
     if(winnerIndexes){
       const winner = squares[winnerIndexes[0]];
       nextStatus = winner + ' won!';
     }
-    else if(this.state.stepNumber >= Math.pow(this.state.boardSize, 2)){
+    else if(this.state.stepNumber+1 >= Math.pow(this.state.boardSize, 2)){
       nextStatus = "Game over!";
     }
     else{
-      nextStatus = "Next player: " + (nextXIsNext ? 'X' : 'O');
+      nextStatus = "Next player: " + (!this.state.xIsNext ? 'X' : 'O');
     }
-    return {nextStatus, nextXIsNext, winnerIndexes};
+    return {nextStatus, winnerIndexes};
   }
 
   jumpTo(step){
